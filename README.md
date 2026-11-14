@@ -109,3 +109,5 @@ https://github.com/jin9xiao/lenovo-nas-portal
    就说明整机重启未验证。若没有终端或 SSH 工具，给出可执行命令，
    不要声称已在设备上安装成功。
 ```
+
+补充：实测这台 T2 的固件预装了 Docker 组件，但 Docker 守护进程未运行；设备内存较小，运行 Docker 容器会增加内存压力，因此本门户不依赖 Docker，厂商未启用它的具体原因尚未确认。
