@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.env*
+*.pem
+*.key
+*.crt
+*.enc
+*.tar*
+settings.json
+nginx.conf
+local-auth.json
+tls/
+deployment/
+backups/
+.agent/
+.playwright-cli/
+output/

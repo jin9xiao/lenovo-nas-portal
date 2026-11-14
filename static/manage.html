@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101923">
+  <title>T2 · 文件与管理</title>
+  <link rel="stylesheet" href="/style.css?v=task-dialog-1">
+  <script defer src="/manage.js?v=task-dialog-1"></script>
+</head>
+<body>
+  <a class="skip" href="#main">跳到内容</a>
+  <header class="top"><a class="brand" id="home-link">联想个人云 <span>T2</span></a><button id="logout" type="button" hidden>退出</button></header>
+  <main id="main">
+    <p class="eyebrow">局域网 · 授权区</p>
+    <h1>文件与管理</h1>
+    <form id="login" class="workspace" hidden>
+      <h2>登录 NAS</h2>
+      <label for="username">联想个人云账号</label>
+      <input id="username" name="username" autocomplete="username" spellcheck="false" autocapitalize="none" autocorrect="off" required maxlength="128">
+      <label for="password">密码</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required maxlength="1024">
+      <button type="submit">登录</button>
+    </form>
+    <p id="notice" role="status">正在检查会话…</p>
+    <section id="workspace" class="workspace" hidden aria-labelledby="view-title">
+      <nav id="views" class="views" aria-label="功能"></nav>
+      <h2 id="view-title" tabindex="-1">文件</h2>
+      <form id="search" class="inline" hidden>
+        <label for="pattern">文件名</label>
+        <input id="pattern" name="q" type="search" autocomplete="off" maxlength="200" required placeholder="输入要查找的文件名…">
+        <button type="submit">搜索</button>
+      </form>
+      <p id="folder" class="note"></p>
+      <div id="results"></div>
+      <section id="transfer-tools" hidden aria-label="下载中心">
+        <nav id="transfer-nav" class="views" aria-label="下载类型"></nav>
+        <form id="add-download" class="inline" hidden>
+          <label for="download-url" id="download-label">下载链接</label>
+          <input id="download-url" name="url" autocomplete="off" spellcheck="false" maxlength="3000" required placeholder="粘贴下载链接…">
+          <button type="submit">添加任务</button>
+        </form>
+        <form id="add-torrent" class="inline" hidden>
+          <label for="torrent-file">BT 种子（最多 512 KiB）</label>
+          <input id="torrent-file" name="torrent" type="file" accept=".torrent" required>
+          <button type="submit">添加种子</button>
+        </form>
+        <button id="refresh-transfers" type="button">刷新列表</button>
+        <p id="transfer-message" role="status"></p>
+        <div id="transfer-results"></div>
+      </section>
+      <nav id="pages" class="views" aria-label="分页"></nav>
+    </section>
+  </main>
+  <dialog id="remove-task-dialog" class="task-dialog" aria-labelledby="remove-task-title" aria-describedby="remove-task-description">
+    <h2 id="remove-task-title">移除下载任务？</h2>
+    <p id="remove-task-name" class="task-dialog-name"></p>
+    <p id="remove-task-description" class="note">任务会从列表中移除，已下载的文件会保留。</p>
+    <div class="task-dialog-actions">
+      <button type="button" id="keep-task" autofocus>保留任务</button>
+      <button type="button" id="remove-task" class="task-dialog-danger">移除任务</button>
+    </div>
+  </dialog>
+</body>
+</html>

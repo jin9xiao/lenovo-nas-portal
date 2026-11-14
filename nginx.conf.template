@@ -1,0 +1,107 @@
+worker_processes 1;
+user nobody nogroup;
+lock_file /run/nas-portal/nginx.lock;
+pid /run/nas-portal/nginx.pid;
+error_log /run/nas-portal/error.log error;
+events { worker_connections 64; }
+http {
+    include /etc/nginx/mime.types;
+    access_log off;
+    server_tokens off;
+    add_header Content-Security-Policy "default-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'" always;
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy no-referrer always;
+    client_body_temp_path /run/nas-portal/client;
+    proxy_temp_path /run/nas-portal/proxy;
+    fastcgi_temp_path /run/nas-portal/fastcgi;
+    uwsgi_temp_path /run/nas-portal/uwsgi;
+    scgi_temp_path /run/nas-portal/scgi;
+    server {
+        listen @NAS_IP@:9090 default_server;
+        server_name @NAS_IP@;
+        root /media/nas-portal/static;
+        allow @LAN_CIDR@;
+        deny all;
+        if ($http_host != '@NAS_IP@:9090') { return 403; }
+        location = /manage.html { return 302 https://@NAS_IP@:9443$request_uri; }
+        location = /api/status {
+            limit_except GET { deny all; }
+            proxy_pass http://127.0.0.1:19090;
+            proxy_pass_request_body off;
+            proxy_set_header Content-Length "";
+            proxy_read_timeout 6s;
+        }
+        location / {
+            limit_except GET { deny all; }
+            try_files $uri $uri/ =404;
+        }
+    }
+    server {
+        listen @NAS_IP@:9443 ssl default_server;
+        server_name @NAS_IP@;
+        ssl_certificate /media/nas-portal/tls/cert.pem;
+        ssl_certificate_key /media/nas-portal/tls/key.pem;
+        ssl_protocols TLSv1.2;
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384;
+        root /media/nas-portal/static;
+        allow @LAN_CIDR@;
+        deny all;
+        if ($http_host != '@NAS_IP@:9443') { return 403; }
+        location /api/private/ {
+            limit_except GET POST { deny all; }
+            client_max_body_size 4k;
+            proxy_pass http://127.0.0.1:19090;
+            proxy_set_header X-Portal-Peer $remote_addr;
+            proxy_read_timeout 8s;
+        }
+        location = /api/private/transfers {
+            limit_except GET POST { deny all; }
+            client_max_body_size 710000;
+            proxy_pass http://127.0.0.1:19090;
+            proxy_set_header X-Portal-Peer $remote_addr;
+            proxy_read_timeout 12s;
+        }
+        location /_portal_completed/ {
+            internal;
+            alias /sata/download/complete/;
+            disable_symlinks on;
+            types {}
+            default_type application/octet-stream;
+            add_header Content-Disposition attachment always;
+            add_header X-Content-Type-Options nosniff always;
+            add_header Cache-Control no-store always;
+        }
+        location /_portal_baidu/ {
+            internal;
+            alias /sata/home/;
+            disable_symlinks on;
+            types {}
+            default_type application/octet-stream;
+            add_header Content-Disposition attachment always;
+            add_header X-Content-Type-Options nosniff always;
+            add_header Cache-Control no-store always;
+        }
+        location = /_portal_native_file {
+            internal;
+            error_log /dev/null crit;
+            proxy_pass http://127.0.0.1/oneapi/v1/file/download;
+            proxy_set_header Cookie "";
+            proxy_set_header Authorization "";
+            proxy_ignore_headers X-Accel-Redirect;
+            proxy_hide_header Set-Cookie;
+            proxy_hide_header Content-Disposition;
+            proxy_hide_header Location;
+            proxy_hide_header Refresh;
+            proxy_buffering off;
+            add_header Content-Disposition attachment always;
+            add_header Content-Security-Policy "sandbox; default-src 'none'" always;
+            add_header X-Content-Type-Options nosniff always;
+            add_header Cache-Control no-store always;
+        }
+        location = / { return 302 /manage.html; }
+        location / {
+            limit_except GET { deny all; }
+            try_files $uri =404;
+        }
+    }
+}

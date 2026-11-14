@@ -1,0 +1,16 @@
+#!/bin/sh
+case "${1:-}" in
+    start)
+        (
+            attempts=0
+            until /media/nas-portal/startup start; do
+                attempts=$((attempts + 1))
+                [ "$attempts" -lt 30 ] || exit 1
+                sleep 4
+            done
+        ) </dev/null >/tmp/nas-portal-boot.log 2>&1 &
+        ;;
+    stop)
+        /media/nas-portal/startup stop
+        ;;
+esac

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#101923">
+  <title>联想个人云 · T2 控制台</title>
+  <link rel="stylesheet" href="/style.css">
+  <script defer src="/app.js?v=device-status-1"></script>
+</head>
+<body>
+  <a class="skip" href="#main">跳到内容</a>
+  <header class="top">
+    <a class="brand" href="/">联想个人云 <span>T2</span></a>
+    <nav aria-label="主导航"><a href="#overview">概览</a><a href="#features">功能目录</a><a href="/manage.html?view=transfers">下载中心</a><a href="/manage.html">文件与管理</a></nav>
+  </header>
+  <main id="main">
+    <section id="overview" aria-labelledby="title">
+      <p class="eyebrow">设备控制台 / 局域网</p>
+      <h1 id="title">你的 T2</h1>
+      <div class="summary">
+        <p id="connection" role="status">正在读取设备状态…</p>
+        <button id="refresh" type="button">刷新状态</button>
+      </div>
+      <div class="telemetry">
+        <article class="drive" id="storage">
+          <h2>存储空间</h2>
+          <p class="reading" id="disk">—</p>
+          <progress id="disk-meter" max="100" aria-label="存储使用比例"></progress>
+          <p class="note" id="disk-note">双盘线性卷，无磁盘冗余</p>
+        </article>
+        <article>
+          <h2>可用内存</h2><p class="reading" id="memory">—</p>
+          <p class="note" id="load">系统负载 —</p>
+        </article>
+        <article>
+          <h2>离线下载</h2><p class="reading" id="downloads">—</p>
+          <p class="note" id="transfer">等待下载状态</p>
+        </article>
+      </div>
+    </section>
+    <section id="features" aria-labelledby="feature-title">
+      <div class="section-head">
+        <div><p class="eyebrow">功能导航</p><h2 id="feature-title">NAS 功能目录</h2></div>
+        <div class="search"><label for="filter">筛选功能</label><input id="filter" name="q" type="search" autocomplete="off" placeholder="例如：文件、备份、相册…"></div>
+      </div>
+      <p class="note">概览免登录。标有授权区入口的功能可在网页查看，其余操作仍在原厂 App 中完成。</p>
+      <p id="empty" hidden>没有匹配的功能。试试其他关键词。</p>
+      <div id="catalog"></div>
+      <noscript>请启用 JavaScript 以查看功能目录和实时状态。</noscript>
+    </section>
+  </main>
+  <footer>联想个人云 T2 · 内网门户</footer>
+</body>
+</html>
